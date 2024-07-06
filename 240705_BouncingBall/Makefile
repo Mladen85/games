@@ -14,33 +14,33 @@ SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 # olcPixelGameEngine library settings
-OLC_ENGINE := lib/olcPixelGameEngine.o
-OLC_INCLUDE := -Ilib
+OLC_ENGINE_SRC := $(LIB_DIR)/olcPixelGameEngine.cpp
+OLC_ENGINE_OBJ := $(OBJ_DIR)/olcPixelGameEngine.o
+OLC_INCLUDE := -I$(LIB_DIR)
 
 # Phony targets
 .PHONY: all clean
-
 
 # Target executable
 TARGET := $(BIN_DIR)/game
 
 # Main target
-$(TARGET): $(OBJS) $(OLC_ENGINE)
+all: $(TARGET)
+
+$(TARGET): $(OBJS) $(OLC_ENGINE_OBJ)
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $(OBJS) $(OLC_ENGINE_OBJ) $(LDFLAGS) -o $@
 
 # Compile each .cpp file into .o files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(OLC_INCLUDE) -c $< -o $@
 
-# Build olcPixelGameEngine as a library
-$(OLC_ENGINE):
+# Build olcPixelGameEngine as a library object
+$(OLC_ENGINE_OBJ): $(OLC_ENGINE_SRC)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean target
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
-
-
