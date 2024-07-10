@@ -16,8 +16,7 @@ public:
 
     void ResolveCollision(Ball& other);
 
-//TODO: Define members as private and add required getters and setters
-public:
+private:
     olc::vf2d position;
     olc::vf2d velocity;
     float radius;

@@ -11,12 +11,23 @@ void Ball::Update(float fElapsedTime, const olc::vi2d& screenSize) {
     // Move the ball
     position += velocity * fElapsedTime;
     // Check for collision with screen edges
-    if (position.x <= radius || position.x >= screenSize.x - radius) {
+    if (position.x < radius) {
         velocity.x *= -1;
+        position.x = radius;
+    }
+    if(position.x > screenSize.x - radius) {
+        velocity.x *= -1;
+        position.x = screenSize.x - radius;
     }
 
-    if (position.y <= radius || position.y >= screenSize.y - radius) {
+    if (position.y < radius) {
         velocity.y *= -1;
+        position.y = radius;
+    }
+    if(position.y > screenSize.y - radius) {
+        velocity.y *= -1;
+        position.y = screenSize.y - radius;
+
     }
 }
 
