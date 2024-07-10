@@ -6,6 +6,8 @@
 #include "ball.hpp"
 #include <vector>
 
+class Ball;
+
 class BouncingBalls : public olc::PixelGameEngine {
 public:
     BouncingBalls();

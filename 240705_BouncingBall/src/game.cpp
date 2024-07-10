@@ -6,43 +6,29 @@ BouncingBalls::BouncingBalls() {
 }
 
 bool BouncingBalls::OnUserCreate() {
-    // Initialize balls
-    balls.push_back({ {50.0f, 50.0f}, {60.0f, 40.0f}, 10.0f, olc::RED });
-    balls.push_back({ {150.0f, 100.0f}, {-60.0f, -40.0f}, 10.0f, olc::BLUE });
+    // Initialize balls with different positions, velocities, and colors
+    balls.emplace_back(olc::vf2d(30, 30), olc::vf2d(50, 80), 25.0f, olc::RED);
+    balls.emplace_back(olc::vf2d(100, 100), olc::vf2d(-60, 40), 25.0f, olc::BLUE);
     return true;
 }
 
 bool BouncingBalls::OnUserUpdate(float fElapsedTime) {
     Clear(olc::BLACK);
 
-    //Update balls
-    for(auto& ball : balls) {
-        //Update position
-        ball.position += ball.velocity * fElapsedTime;
+    // Update and draw balls
+    for (auto& ball : balls) {
+        ball.Update(fElapsedTime, olc::vi2d(ScreenWidth(), ScreenHeight()));
+        ball.Draw(this);
+    }
 
-        // Check for collision with walls
-        if (ball.position.x < ball.radius || ball.position.x > ScreenWidth() - ball.radius) {
-            ball.velocity.x *= -1;
+    // Check for collisions and resolve them
+    for (size_t i = 0; i < balls.size(); ++i) {
+        for (size_t j = i + 1; j < balls.size(); ++j) {
+            if (balls[i].IsCollidingWith(balls[j])) {
+                balls[i].ResolveCollision(balls[j]);
+            }
         }
-        if (ball.position.y < ball.radius || ball.position.y > ScreenHeight() - ball.radius) {
-            ball.velocity.y *= -1;
-        }
     }
 
-    // Check for collision between balls
-    if ((balls[0].position - balls[1].position).mag2() < (balls[0].radius + balls[1].radius) * (balls[0].radius + balls[1].radius)) {
-        // Simple elastic collision response
-        olc::vf2d normal = (balls[1].position - balls[0].position).norm();
-        olc::vf2d relativeVelocity = balls[0].velocity - balls[1].velocity;
-
-        balls[0].velocity -= normal * (relativeVelocity.dot(normal));
-        balls[1].velocity += normal * (relativeVelocity.dot(normal));
-    }
-
-    // Draw balls
-    for (const auto& ball : balls) {
-        FillCircle(ball.position, ball.radius, ball.color);
-    }
-    
     return true;
 }
